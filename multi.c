@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   int lastdeltime = 0;
   int lastrowlength = 0;
   int lastkeysym = 0;
-  char *msg = "Clear!";
+  char *msg = "Clear";
   int bwidth=strlen(msg)*6;
   int bheight=15;
   int btop=20;

@@ -19,10 +19,12 @@ int main(int argc, char *argv[]) {
   int winheight = 300;
   int winwidth = 500;
   int borderwidth = 10;
-  int btop=20;
-  int bleft=20;
-  int bwidth=60;
+  char *msg = "Clear it!";
+  int bwidth=strlen(msg)*6;
   int bheight=15;
+  int btop=20;
+  int bmargin = 2;
+  int bleft=winwidth - bwidth - 20;
   GC blue;
   XColor blue_color;
   Colormap colormap;
@@ -64,58 +66,57 @@ int main(int argc, char *argv[]) {
   XParseColor(disp, wcolormap, whiteidk, &white_color);
   XAllocColor(disp, wcolormap, &white_color);
   XSetForeground(disp, white, white_color.pixel);
-  char *msg = "Clear it!";
   while (1) {
     XNextEvent(disp, &e);
-        if (e.type == Expose)
-        {
-          XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight);
-          XDrawString(disp, win, white, 22, 32, msg, strlen(msg));
-    //http://tronche.com/gui/x/xlib/graphics/drawing-text/XDrawString.html
-        }
-    if(e.type == 6) // mouse move
+    if (e.type == Expose)
       {
-        int x=e.xmotion.x;
-        int y=e.xmotion.y;
-        if(!q) printf("Mouse moved. X: %d, Y: %d\n",x,y);
-        XFillRectangle(disp, win, blue, x, y, 5, 5);
+        XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight);
+        XDrawString(disp, win, white, bleft+bmargin, btop+bmargin+9, msg, strlen(msg));
+        //http://tronche.com/gui/x/xlib/graphics/drawing-text/XDrawString.html
       }
-      if(e.type == 4) // button press
+      if(e.type == 6) // mouse move
         {
-          int x=e.xbutton.x;
-          int y=e.xbutton.y;
-          int button = e.xbutton.button;
-          if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
-          if(button == 1)
-            {
-              XFillRectangle(disp, win, DefaultGC(disp, screen), x, y, 10, 10);
-              if(y < bheight+btop && x < bwidth+bleft)
-                {
-                  if(y > btop && x > bleft)
-                    {
-                      if(!q) printf("You've hitten the button!!\nClearing...\n");
-                      XFillRectangle(disp, win, white, 0, 0, winwidth, winheight);
-                      if(!q) printf("Repainting clearbutton...\n");
-                      XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight);
-                      XDrawString(disp, win, white, 22, 32, msg, strlen(msg));
-                    }
-                }
-            }
+          int x=e.xmotion.x;
+          int y=e.xmotion.y;
+          if(!q) printf("Mouse moved. X: %d, Y: %d\n",x,y);
+          XFillRectangle(disp, win, blue, x, y, 5, 5);
         }
-    if (e.type == KeyPress)
-      {
-        if(!q) printf("Keycode: %d\n", e.xkey.keycode);
-        unsigned long keysym = XLookupKeysym(&e.xkey, 0);
-        if(!q) printf("Keysym: %lu\n",keysym);
-        char *ascii = XKeysymToString(keysym);
-        if(!q) printf("ASCII: %s\n",ascii);
-        if(keysym == 65307) // ESC
+        if(e.type == 4) // button press
           {
-            printf("Exiting...\n");
-            return 0;
-          }
-        }
-      }
-      XCloseDisplay(disp);
-      return 0;
-    }
+            int x=e.xbutton.x;
+            int y=e.xbutton.y;
+            int button = e.xbutton.button;
+            if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
+            if(button == 1)
+              {
+                XFillRectangle(disp, win, DefaultGC(disp, screen), x, y, 10, 10);
+                if(y < bheight+btop && x < bwidth+bleft)
+                  {
+                    if(y > btop && x > bleft)
+                      {
+                        if(!q) printf("You've hitten the button!!\nClearing...\n");
+                        XFillRectangle(disp, win, white, 0, 0, winwidth, winheight);
+                        if(!q) printf("Repainting clearbutton...\n");
+                        XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight);
+                        XDrawString(disp, win, white, bleft+bmargin, btop+bmargin+9, msg, strlen(msg));
+                      }
+                    }
+                  }
+                }
+                if (e.type == KeyPress)
+                  {
+                    if(!q) printf("Keycode: %d\n", e.xkey.keycode);
+                    unsigned long keysym = XLookupKeysym(&e.xkey, 0);
+                    if(!q) printf("Keysym: %lu\n",keysym);
+                    char *ascii = XKeysymToString(keysym);
+                    if(!q) printf("ASCII: %s\n",ascii);
+                    if(keysym == 65307) // ESC
+                      {
+                        printf("Exiting...\n");
+                        return 0;
+                      }
+                    }
+                  }
+                  XCloseDisplay(disp);
+                  return 0;
+                }
