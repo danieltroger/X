@@ -27,6 +27,10 @@ int main(int argc, char *argv[]) {
   XColor red_color;
   Colormap rcolormap;
   char redidk[] = "#FF0000";
+  GC white;
+  XColor white_color;
+  Colormap wcolormap;
+  char whiteidk[] = "#FFFFFF";
 
   disp = XOpenDisplay(NULL);
   if (disp == NULL) {
@@ -51,27 +55,33 @@ int main(int argc, char *argv[]) {
   XParseColor(disp, colormap, redidk, &red_color);
   XAllocColor(disp, colormap, &red_color);
   XSetForeground(disp, red, red_color.pixel);
+  wcolormap = DefaultColormap(disp, 0);
+  white = XCreateGC(disp, win, 0, 0);
+  XParseColor(disp, wcolormap, whiteidk, &white_color);
+  XAllocColor(disp, wcolormap, &white_color);
+  XSetForeground(disp, white, white_color.pixel);
+  char *msg = "Press me!";
   while (1) {
     XNextEvent(disp, &e);
-    //    if (e.type == Expose)
-    //    {
-    // XFillRectangle(d, w, DefaultGC(d, s), 20, 20, 10, 10);
-    //  XDrawString(disp, win, DefaultGC(disp, screen), 10, 10, msg, strlen(msg));
+        if (e.type == Expose)
+        {
+          XFillRectangle(disp, win, red, 20, 20, 60, 15);
+          XDrawString(disp, win, white, 22, 32, msg, strlen(msg));
     //http://tronche.com/gui/x/xlib/graphics/drawing-text/XDrawString.html
-    //    }
+        }
     if(e.type == 6) // mouse move
       {
         int x=e.xmotion.x;
         int y=e.xmotion.y;
-        printf("Mouse moved. X: %d, Y: %d\n",x,y);
-        XFillRectangle(disp, win, blue, x, y, 4, 4);
+        if(!q) printf("Mouse moved. X: %d, Y: %d\n",x,y);
+        XFillRectangle(disp, win, blue, x, y, 3, 3);
       }
       if(e.type == 4) // mouse move
         {
           int x=e.xbutton.x;
           int y=e.xbutton.y;
           printf("Button pressed. X: %d, Y: %d\n",x,y);
-          XFillRectangle(disp, win, red, x, y, 15, 15);
+          XFillRectangle(disp, win, DefaultGC(disp, screen), x, y, 10, 10);
         }
     if (e.type == KeyPress)
       {
