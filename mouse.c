@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     XNextEvent(disp, &e);
         if (e.type == Expose)
         {
-          XFillRectangle(disp, win, red, btop, bleft, bwidth, bheight);
+          XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight);
           XDrawString(disp, win, white, 22, 32, msg, strlen(msg));
     //http://tronche.com/gui/x/xlib/graphics/drawing-text/XDrawString.html
         }
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
                       if(!q) printf("You've hitten the button!!\nClearing...\n");
                       XFillRectangle(disp, win, white, 0, 0, winwidth, winheight);
                       if(!q) printf("Repainting clearbutton...\n");
-                      XFillRectangle(disp, win, red, btop, bleft, bwidth, bheight);
+                      XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight);
                       XDrawString(disp, win, white, 22, 32, msg, strlen(msg));
                     }
                 }
