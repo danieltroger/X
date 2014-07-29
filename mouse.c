@@ -23,6 +23,10 @@ int main(int argc, char *argv[]) {
   XColor blue_color;
   Colormap colormap;
   char blueidk[] = "#0000FF";
+  GC red;
+  XColor red_color;
+  Colormap rcolormap;
+  char redidk[] = "#FF0000";
 
   disp = XOpenDisplay(NULL);
   if (disp == NULL) {
@@ -42,6 +46,11 @@ int main(int argc, char *argv[]) {
   XParseColor(disp, colormap, blueidk, &blue_color);
   XAllocColor(disp, colormap, &blue_color);
   XSetForeground(disp, blue, blue_color.pixel);
+  rcolormap = DefaultColormap(disp, 0);
+  red = XCreateGC(disp, win, 0, 0);
+  XParseColor(disp, colormap, redidk, &red_color);
+  XAllocColor(disp, colormap, &red_color);
+  XSetForeground(disp, red, red_color.pixel);
   while (1) {
     XNextEvent(disp, &e);
     //    if (e.type == Expose)
@@ -57,6 +66,13 @@ int main(int argc, char *argv[]) {
         printf("Mouse moved. X: %d, Y: %d\n",x,y);
         XFillRectangle(disp, win, blue, x, y, 4, 4);
       }
+      if(e.type == 4) // mouse move
+        {
+          int x=e.xbutton.x;
+          int y=e.xbutton.y;
+          printf("Button pressed. X: %d, Y: %d\n",x,y);
+          XFillRectangle(disp, win, red, x, y, 15, 15);
+        }
     if (e.type == KeyPress)
       {
         if(!q) printf("Keycode: %d\n", e.xkey.keycode);
