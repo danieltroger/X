@@ -16,10 +16,10 @@ int main(int argc, char *argv[]) {
   int screen;
   int winy = 0;
   int winx = 0;
-  int winheight = 300;
-  int winwidth = 500;
-  int borderwidth = 10;
-  char *msg = "Clear it!";
+  int winheight = 910;
+  int winwidth = 1285;
+  int borderwidth = 1;
+  char *msg = "Clear screen";
   int bwidth=strlen(msg)*6;
   int bheight=15;
   int btop=20;
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
   screen = DefaultScreen(disp);
   win = XCreateSimpleWindow(disp, RootWindow(disp, screen), winx, winy, winwidth, winheight, borderwidth,
   BlackPixel(disp, screen), WhitePixel(disp, screen));
-  XSelectInput(disp, win, ExposureMask | KeyPressMask | PointerMotionMask | ButtonPressMask);
+  XSelectInput(disp, win, ExposureMask | KeyPressMask | PointerMotionMask | ButtonPressMask | ResizeRedirectMask);
   // Window XCreateWindow(display, parent, x, y, width, height, border_width, depth,
   //                    class, visual, valuemask, attributes)
   XMapWindow(disp, win);
@@ -70,8 +70,10 @@ int main(int argc, char *argv[]) {
     XNextEvent(disp, &e);
     if (e.type == Expose)
       {
-        XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight);
-        XDrawString(disp, win, white, bleft+bmargin, btop+bmargin+9, msg, strlen(msg));
+        if(!q) printf("Clearing & repainting window...\n");
+        XFillRectangle(disp, win, white, 0, 0, winwidth, winheight); // clear the screen
+        XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight); // print the button
+        XDrawString(disp, win, white, bleft+bmargin, btop+bmargin+9, msg, strlen(msg)); // button text
         //http://tronche.com/gui/x/xlib/graphics/drawing-text/XDrawString.html
       }
       if(e.type == 6) // mouse move
@@ -79,17 +81,29 @@ int main(int argc, char *argv[]) {
           int x=e.xmotion.x;
           int y=e.xmotion.y;
           if(!q) printf("Mouse moved. X: %d, Y: %d\n",x,y);
-          XFillRectangle(disp, win, blue, x, y, 5, 5);
+          XFillRectangle(disp, win, blue, x, y, 10,10);
         }
+        if(e.type == 25) // resize
+          {
+            int width=e.xresizerequest.width;
+            int height=e.xresizerequest.height;
+            if(!q) printf("Window resize. Width: %d, Height: %d\n",width,height);
+            winheight=height;
+            winwidth=width;
+            bleft=winwidth - bwidth - 20;
+            // should've done a function but c&p is easier
+            XFillRectangle(disp, win, red, bleft, btop, bwidth, bheight);
+            XDrawString(disp, win, white, bleft+bmargin, btop+bmargin+9, msg, strlen(msg));
+          }
         if(e.type == 4) // button press
           {
             int x=e.xbutton.x;
             int y=e.xbutton.y;
-            int button = e.xbutton.button;
+            int button = e.xbutton.button; // button type 1 is left click 3 right
             if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
-            if(button == 1)
+            if(button == 1) // left click
               {
-                XFillRectangle(disp, win, DefaultGC(disp, screen), x, y, 10, 10);
+                XFillRectangle(disp, win, DefaultGC(disp, screen), x, y, 20, 20);
                 if(y < bheight+btop && x < bwidth+bleft)
                   {
                     if(y > btop && x > bleft)
@@ -113,10 +127,9 @@ int main(int argc, char *argv[]) {
                     if(keysym == 65307) // ESC
                       {
                         printf("Exiting...\n");
+                        XCloseDisplay(disp);
                         return 0;
                       }
                     }
                   }
-                  XCloseDisplay(disp);
-                  return 0;
                 }
