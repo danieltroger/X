@@ -7,8 +7,42 @@
 #include <stdbool.h>
 #include <unistd.h>
 // #includ ur #life
+
+bool q = false;
+int winwidth = 500;
+int sliderpos = 1;
+
+GC GC_color(Display *disp, Window win, char color[])
+{
+  GC a;
+  XColor b;
+  Colormap c;
+  c = DefaultColormap(disp, 0);
+  a = XCreateGC(disp, win, 0, 0);
+  XParseColor(disp, c, color, &b);
+  XAllocColor(disp, c, &b);
+  XSetForeground(disp, a, b.pixel);
+  return a;
+}
+
+void slider(Display *disp, Window win, int screen, int height, int width, int wscale, int left, int top)
+{
+  if(sliderpos < 0) sliderpos = 0;
+  if(sliderpos > 100) sliderpos = 100;
+  int rel = winwidth / wscale;
+  int absheight = height*rel;
+  int abswidth = width*rel;
+  int absleft = left*rel;
+  int abstop = top*rel;
+  if(!q) printf("Rel: %d height: %d, width: %d, left: %d, top: %d, sliderpos: %d\n",rel, absheight, abswidth, absleft, abstop, sliderpos);
+  XFillRectangle(disp, win, GC_color(disp,win,"#FF0000"), absleft, abstop-2, abswidth, absheight+9);
+  float htop = abstop+(absheight/100.0)*sliderpos;
+  int hleft = absleft+2;
+  if(!q) printf("Htop: %f hleft: %d\n",htop,hleft);
+  XFillRectangle(disp, win, GC_color(disp,win,"#00FF00"), hleft, htop, abswidth-4, 5);
+}
+
 int main(int argc, char *argv[]) {
-  bool q = false;
   if(argv[1] != NULL && strcmp(argv[1], "-q") == 0) q=true;
   Display *disp;
   Window win;
@@ -16,9 +50,9 @@ int main(int argc, char *argv[]) {
   int screen;
   int winx = 0;
   int winy = 0;
-  int winwidth = 500;
   int winheight = 500;
   int borderwidth = 1;
+  int wscale = 100; // 1m
   disp = XOpenDisplay(NULL);
   if (disp == NULL) {
     fprintf(stderr, "Cannot open display\n");
@@ -35,6 +69,34 @@ int main(int argc, char *argv[]) {
   while (1)
     {
       XNextEvent(disp, &e);
-
+      if (e.type == KeyPress)
+        {
+          if(!q) printf("Keycode: %d\n", e.xkey.keycode);
+          unsigned long keysym = XLookupKeysym(&e.xkey, 0);
+          if(!q) printf("Keysym: %lu\n",keysym);
+          char *ascii = XKeysymToString(keysym);
+          if(!q) printf("ASCII: %s\n",ascii);
+          if(keysym == 65307)
+            {
+              printf("Exiting...\n");
+              XCloseDisplay(disp);
+              return 0;
+            }
+          }
+          if(e.type == 4) // button press
+            {
+              int x=e.xbutton.x;
+              int y=e.xbutton.y;
+              int button = e.xbutton.button;
+              if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
+              if(button == 1)
+                {
+                  
+                }
+            }
+      if (e.type == Expose)
+        {
+          slider(disp,win,screen, 20,8,wscale,80,12);
+        }
     }
   }
