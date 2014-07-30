@@ -11,7 +11,7 @@
 bool q = false;
 int winwidth = 1290;
 int winheight = 910;
-int sliderpos = 1;
+int sliderpos = 0;
 
 GC GC_color(Display *disp, Window win, char color[])
 {
@@ -30,8 +30,8 @@ void slider(Display *disp, Window win, int screen, int height, int width, int ws
 {
   if(sliderpos < 0) sliderpos = 0;
   if(sliderpos > 100) sliderpos = 100;
-  int relx = winwidth / wscale;
-  int rely = winwidth / wscale;
+  int rel = winwidth / wscale;
+  int rely = winheight / wscale;
   int absheight = height*rel;
   int abswidth = width*rel;
   int absleft = left*rel;
