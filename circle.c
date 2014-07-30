@@ -32,11 +32,11 @@ void slider(Display *disp, Window win, int screen, int height, int width, int ws
   if(sliderpos > 100) sliderpos = 100;
   int rel = winwidth / wscale;
   int rely = winheight / wscale;
-  int absheight = height*rel;
+  int absheight = height*rely;
   int abswidth = width*rel;
   int absleft = left*rel;
-  int abstop = top*rel;
-  if(!q) printf("Rel: %d height: %d, width: %d, left: %d, top: %d, sliderpos: %d\n",rel, absheight, abswidth, absleft, abstop, sliderpos);
+  int abstop = top*rely;
+  if(!q) printf("Rel: %d, relY: %d, height: %d, width: %d, left: %d, top: %d, sliderpos: %d\n",rel,rely , absheight, abswidth, absleft, abstop, sliderpos);
   XFillRectangle(disp, win, GC_color(disp,win,"#FF0000"), absleft, abstop-2, abswidth, absheight+9);
   float htop = abstop+(absheight/100.0)*sliderpos;
   int hleft = absleft+2;
@@ -90,8 +90,8 @@ int main(int argc, char *argv[]) {
               int y=e.xbutton.y;
               int button = e.xbutton.button;
               if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
-              if(button == 5) sliderpos++; slider(disp,win,screen, 30,4,wscale,80,12);
-              if(button == 4) sliderpos--; slider(disp,win,screen, 30,4,wscale,80,12);
+              if(button == 5) sliderpos++; slider(disp,win,screen, 50,7,wscale,90,1);
+              if(button == 4) sliderpos--; slider(disp,win,screen, 50,7,wscale,90,1);
             }
             if(e.type == 25) // resize
               {
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
                 if(!q) printf("Window resize. Width: %d, Height: %d\n",width,height);
                 winheight=height;
                 winwidth=width;
-                slider(disp,win,screen, 30,4,wscale,80,12);
+                slider(disp,win,screen, 50,7,wscale,90,1);
               }
             if(e.type == 6) // mouse move
               {
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
       if (e.type == Expose)
         {
           XFillRectangle(disp, win, GC_color(disp,win,"#FFFFFF"), 0, 0, winwidth, winheight);
-          slider(disp,win,screen, 30,4,wscale,80,12);
+          slider(disp,win,screen, 50,7,wscale,90,1);
         }
     }
   }
