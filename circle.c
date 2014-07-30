@@ -10,6 +10,7 @@
 
 bool q = false;
 int winwidth = 1290;
+int winheight = 910;
 int sliderpos = 1;
 
 GC GC_color(Display *disp, Window win, char color[])
@@ -29,7 +30,8 @@ void slider(Display *disp, Window win, int screen, int height, int width, int ws
 {
   if(sliderpos < 0) sliderpos = 0;
   if(sliderpos > 100) sliderpos = 100;
-  int rel = winwidth / wscale;
+  int relx = winwidth / wscale;
+  int rely = winwidth / wscale;
   int absheight = height*rel;
   int abswidth = width*rel;
   int absleft = left*rel;
@@ -50,7 +52,6 @@ int main(int argc, char *argv[]) {
   int screen;
   int winx = 0;
   int winy = 0;
-  int winheight = 910;
   int borderwidth = 1;
   int wscale = 100; // 1m
   disp = XOpenDisplay(NULL);
