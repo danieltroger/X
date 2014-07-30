@@ -1,7 +1,7 @@
 X
 =
 
-Cool but unreadable.
+Nearly fine!
 
 ![Screenshot slider](http://i.leetfiles.com/13f055c3.png)
 
