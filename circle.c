@@ -90,8 +90,8 @@ int main(int argc, char *argv[]) {
               int y=e.xbutton.y;
               int button = e.xbutton.button;
               if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
-              if(button == 4) sliderpos++; slider(disp,win,screen, 30,4,wscale,80,12);
-              if(button == 5) sliderpos--; slider(disp,win,screen, 30,4,wscale,80,12);
+              if(button == 5) sliderpos++; slider(disp,win,screen, 30,4,wscale,80,12);
+              if(button == 4) sliderpos--; slider(disp,win,screen, 30,4,wscale,80,12);
             }
             if(e.type == 25) // resize
               {
