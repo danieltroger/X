@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <unistd.h>
 // #includ ur #life
 
@@ -12,8 +13,12 @@ bool q = false;
 int winwidth = 1290;
 int winheight = 910;
 int sliderpos = 0;
+int wscale = 100; // 1m
+Display *disp;
+Window win;
+int screen;
 
-GC GC_color(Display *disp, Window win, char color[])
+GC GC_color(char color[])
 {
   GC a;
   XColor b;
@@ -26,7 +31,8 @@ GC GC_color(Display *disp, Window win, char color[])
   return a;
 }
 
-void slider(Display *disp, Window win, int screen, int height, int width, int wscale, int left, int top)
+
+void slider(int left, int top, int width, int height)
 {
   if(sliderpos < 0) sliderpos = 0;
   if(sliderpos > 100) sliderpos = 100;
@@ -37,23 +43,40 @@ void slider(Display *disp, Window win, int screen, int height, int width, int ws
   int absleft = left*rel;
   int abstop = top*rely;
   if(!q) printf("Rel: %d, relY: %d, height: %d, width: %d, left: %d, top: %d, sliderpos: %d\n",rel,rely , absheight, abswidth, absleft, abstop, sliderpos);
-  XFillRectangle(disp, win, GC_color(disp,win,"#FF0000"), absleft, abstop-2, abswidth, absheight+9);
+  XFillRectangle(disp, win, GC_color("#FF0000"), absleft, abstop-2, abswidth, absheight+9);
   float htop = abstop+(absheight/100.0)*sliderpos;
   int hleft = absleft+2;
   if(!q) printf("Htop: %f hleft: %d\n",htop,hleft);
-  XFillRectangle(disp, win, GC_color(disp,win,"#00FF00"), hleft, htop, abswidth-4, 5);
+  XFillRectangle(disp, win, GC_color("#00FF00"), hleft, htop, abswidth-4, 5);
+}
+
+void sbutl(int x, int y, int but, int left, int top, int width, int height)
+{
+  if(sliderpos < 0) sliderpos = 0;
+  if(sliderpos > 100) sliderpos = 100;
+  int rel = winwidth / wscale;
+  int rely = winheight / wscale;
+  int absheight = (height*rely)+9;
+  int abswidth = width*rel;
+  int absleft = left*rel;
+  int abstop = top*rely;
+  //printf("%d<%d && %d < %d && %d > %d && %d > %d\n",x,absleft+abswidth,y,abstop+absheight,x,absleft,y,abstop);
+  //printf("height: %d, width: %d, left: %d, top: %d\n",absheight, abswidth, absleft, abstop);
+  if(x < absleft+abswidth && y < abstop+absheight && x > absleft && y > abstop)
+    {
+      if(!q) printf("You've scrolled on the slider!\n");
+      if(but == 4) sliderpos--;
+      if(but == 5) sliderpos++;
+      slider(left,top,width,height);
+    }
 }
 
 int main(int argc, char *argv[]) {
   if(argv[1] != NULL && strcmp(argv[1], "-q") == 0) q=true;
-  Display *disp;
-  Window win;
   XEvent e;
-  int screen;
   int winx = 0;
   int winy = 0;
   int borderwidth = 1;
-  int wscale = 100; // 1m
   disp = XOpenDisplay(NULL);
   if (disp == NULL) {
     fprintf(stderr, "Cannot open display\n");
@@ -90,8 +113,8 @@ int main(int argc, char *argv[]) {
               int y=e.xbutton.y;
               int button = e.xbutton.button;
               if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
-              if(button == 5) sliderpos++; slider(disp,win,screen, 50,7,wscale,90,1);
-              if(button == 4) sliderpos--; slider(disp,win,screen, 50,7,wscale,90,1);
+              if(button == 5) sbutl(x,y,5,95,1,5,40);
+              if(button == 4) sbutl(x,y,4,95,1,5,40);
             }
             if(e.type == 25) // resize
               {
@@ -100,7 +123,7 @@ int main(int argc, char *argv[]) {
                 if(!q) printf("Window resize. Width: %d, Height: %d\n",width,height);
                 winheight=height;
                 winwidth=width;
-                slider(disp,win,screen, 50,7,wscale,90,1);
+                slider(95,1,5,40);
               }
             if(e.type == 6) // mouse move
               {
@@ -110,8 +133,8 @@ int main(int argc, char *argv[]) {
               }
       if (e.type == Expose)
         {
-          XFillRectangle(disp, win, GC_color(disp,win,"#FFFFFF"), 0, 0, winwidth, winheight);
-          slider(disp,win,screen, 50,7,wscale,90,1);
+          XFillRectangle(disp, win, GC_color("#FFFFFF"), 0, 0, winwidth, winheight);
+          slider(95,1,5,40);
         }
     }
   }
