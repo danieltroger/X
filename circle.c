@@ -9,7 +9,7 @@
 // #includ ur #life
 
 bool q = false;
-int winwidth = 500;
+int winwidth = 1290;
 int sliderpos = 1;
 
 GC GC_color(Display *disp, Window win, char color[])
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   int screen;
   int winx = 0;
   int winy = 0;
-  int winheight = 500;
+  int winheight = 910;
   int borderwidth = 1;
   int wscale = 100; // 1m
   disp = XOpenDisplay(NULL);
@@ -89,14 +89,28 @@ int main(int argc, char *argv[]) {
               int y=e.xbutton.y;
               int button = e.xbutton.button;
               if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
-              if(button == 1)
-                {
-                  
-                }
+              if(button == 4) sliderpos++; slider(disp,win,screen, 30,4,wscale,80,12);
+              if(button == 5) sliderpos--; slider(disp,win,screen, 30,4,wscale,80,12);
             }
+            if(e.type == 25) // resize
+              {
+                int width=e.xresizerequest.width;
+                int height=e.xresizerequest.height;
+                if(!q) printf("Window resize. Width: %d, Height: %d\n",width,height);
+                winheight=height;
+                winwidth=width;
+                slider(disp,win,screen, 30,4,wscale,80,12);
+              }
+            if(e.type == 6) // mouse move
+              {
+                int x=e.xmotion.x;
+                int y=e.xmotion.y;
+                if(!q) printf("Mouse moved. X: %d, Y: %d\n",x,y);
+              }
       if (e.type == Expose)
         {
-          slider(disp,win,screen, 20,8,wscale,80,12);
+          XFillRectangle(disp, win, GC_color(disp,win,"#FFFFFF"), 0, 0, winwidth, winheight);
+          slider(disp,win,screen, 30,4,wscale,80,12);
         }
     }
   }
