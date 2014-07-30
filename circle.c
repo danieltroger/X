@@ -43,11 +43,11 @@ void slider(int left, int top, int width, int height)
   int absleft = left*rel;
   int abstop = top*rely;
   if(!q) printf("Rel: %d, relY: %d, height: %d, width: %d, left: %d, top: %d, sliderpos: %d\n",rel,rely , absheight, abswidth, absleft, abstop, sliderpos);
-  XFillRectangle(disp, win, GC_color("#FF0000"), absleft, abstop-2, abswidth, absheight+9);
+  XFillRectangle(disp, win, GC_color("#BE04FF"), absleft, abstop-2, abswidth, absheight+9);
   float htop = abstop+(absheight/100.0)*sliderpos;
   int hleft = absleft+2;
   if(!q) printf("Htop: %f hleft: %d\n",htop,hleft);
-  XFillRectangle(disp, win, GC_color("#00FF00"), hleft, htop, abswidth-4, 5);
+  XFillRectangle(disp, win, GC_color("#FF0000"), hleft, htop, abswidth-4, 5);
 }
 
 void sbutl(int x, int y, int but, int left, int top, int width, int height)
