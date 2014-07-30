@@ -10,6 +10,7 @@
 // #includ ur #life
 
 bool q = false;
+bool qq = false;
 int winwidth = 1290;
 int winheight = 910;
 int sliderpos = 0;
@@ -42,11 +43,11 @@ void slider(int left, int top, int width, int height)
   int abswidth = width*rel;
   int absleft = left*rel;
   int abstop = top*rely;
-  if(!q) printf("Rel: %d, relY: %d, height: %d, width: %d, left: %d, top: %d, sliderpos: %d\n",rel,rely , absheight, abswidth, absleft, abstop, sliderpos);
+  if(!q) printf("\033[35mRel: %d, relY: %d, height: %d, width: %d, left: %d, top: %d, sliderpos: %d\033[0m\n",rel,rely , absheight, abswidth, absleft, abstop, sliderpos);
   XFillRectangle(disp, win, GC_color("#BE04FF"), absleft, abstop-2, abswidth, absheight+9);
   float htop = abstop+(absheight/100.0)*sliderpos;
   int hleft = absleft+2;
-  if(!q) printf("Htop: %f hleft: %d\n",htop,hleft);
+  if(!q) printf("\033[35mHtop: %f hleft: %d\033[0m\n",htop,hleft);
   XFillRectangle(disp, win, GC_color("#FF0000"), hleft, htop, abswidth-4, 5);
 }
 
@@ -64,15 +65,17 @@ void sbutl(int x, int y, int but, int left, int top, int width, int height)
   //printf("height: %d, width: %d, left: %d, top: %d\n",absheight, abswidth, absleft, abstop);
   if(x < absleft+abswidth && y < abstop+absheight && x > absleft && y > abstop)
     {
-      if(!q) printf("You've scrolled on the slider!\n");
+      if(!q) printf("\033[31mYou've scrolled on the slider!\033[0m\n");
       if(but == 4) sliderpos--;
       if(but == 5) sliderpos++;
       slider(left,top,width,height);
+      if(!qq) printf("\033[32mSlider change: %d%%\033[0m\n",sliderpos);
     }
 }
 
 int main(int argc, char *argv[]) {
   if(argv[1] != NULL && strcmp(argv[1], "-q") == 0) q=true;
+  if(argv[2] != NULL && strcmp(argv[2], "-q") == 0) qq=true;
   XEvent e;
   int winx = 0;
   int winy = 0;
@@ -95,14 +98,14 @@ int main(int argc, char *argv[]) {
       XNextEvent(disp, &e);
       if (e.type == KeyPress)
         {
-          if(!q) printf("Keycode: %d\n", e.xkey.keycode);
+          if(!q) printf("\033[36mKeycode: %d\033[0m\n", e.xkey.keycode);
           unsigned long keysym = XLookupKeysym(&e.xkey, 0);
-          if(!q) printf("Keysym: %lu\n",keysym);
+          if(!q) printf("\033[36mKeysym: %lu\033[0m\n",keysym);
           char *ascii = XKeysymToString(keysym);
-          if(!q) printf("ASCII: %s\n",ascii);
+          if(!q) printf("\033[36mASCII: %s\033[0m\n",ascii);
           if(keysym == 65307)
             {
-              printf("Exiting...\n");
+              printf("\033[31mExiting...\033[0m\n");
               XCloseDisplay(disp);
               return 0;
             }
@@ -112,7 +115,7 @@ int main(int argc, char *argv[]) {
               int x=e.xbutton.x;
               int y=e.xbutton.y;
               int button = e.xbutton.button;
-              if(!q) printf("Button pressed. X: %d, Y: %d Button: %d\n",x,y,button);
+              if(!q) printf("\033[95mButton pressed. X: %d, Y: %d Button: %d\033[0m\n",x,y,button);
               if(button == 5) sbutl(x,y,5,95,1,5,40);
               if(button == 4) sbutl(x,y,4,95,1,5,40);
             }
@@ -120,7 +123,7 @@ int main(int argc, char *argv[]) {
               {
                 int width=e.xresizerequest.width;
                 int height=e.xresizerequest.height;
-                if(!q) printf("Window resize. Width: %d, Height: %d\n",width,height);
+                if(!q) printf("\033[91mWindow resize. Width: %d, Height: %d\033[0m\n",width,height);
                 winheight=height;
                 winwidth=width;
                 slider(95,1,5,40);
@@ -129,7 +132,7 @@ int main(int argc, char *argv[]) {
               {
                 int x=e.xmotion.x;
                 int y=e.xmotion.y;
-                if(!q) printf("Mouse moved. X: %d, Y: %d\n",x,y);
+                if(!q) printf("\033[34mMouse moved. X: %d, Y: %d\033[0m\n",x,y);
               }
       if (e.type == Expose)
         {
