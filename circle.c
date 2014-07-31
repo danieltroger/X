@@ -73,6 +73,48 @@ void sbutl(int x, int y, int but, int left, int top, int width, int height)
     }
 }
 
+char *dec2hex(long int num)
+{
+  long int rem[50],i=0,length=0;
+  char ret[80];
+  while(num>0)
+    {
+      rem[i]=num%16;
+      num=num/16;
+      i++;
+      length++;
+    }
+
+    printf("Hexadecimal number : ");
+    for(i=length-1;i>=0;i--)
+      {
+        switch(rem[i])
+        {
+          case 10:
+          strcat(ret,"A");
+          break;
+          case 11:
+          strcat(ret,"B");
+          break;
+          case 12:
+          strcat(ret,"C");
+          break;
+          case 13:
+          strcat(ret,"D");
+          break;
+          case 14:
+          strcat(ret,"E");
+          break;
+          case 15:
+          strcat(ret,"F");
+          break;
+          default :
+          printf(ret,"%ld",rem[i]);
+        }
+      }
+      return ret;
+    }
+
 int main(int argc, char *argv[]) {
   if(argv[1] != NULL && strcmp(argv[1], "-q") == 0) q=true;
   if(argv[2] != NULL && strcmp(argv[2], "-q") == 0) qq=true;
