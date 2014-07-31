@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <math.h>
 // #includ ur #life
 
 bool q = false;
@@ -71,115 +72,118 @@ void sbutl(int x, int y, int but, int left, int top, int width, int height)
       slider(left,top,width,height);
       if(!qq) printf("\033[32mSlider change: %d%%\033[0m\n",sliderpos);
     }
-}
+  }
 
-char *dec2hex(long int num)
-{
-  long int rem[50],i=0,length=0;
-  char ret[80];
-  while(num>0)
-    {
-      rem[i]=num%16;
-      num=num/16;
-      i++;
-      length++;
-    }
-
-    printf("Hexadecimal number : ");
-    for(i=length-1;i>=0;i--)
+  char *dec2hex(long int num)
+  {
+    long int rem[50],i=0,length=0;
+    char *ret[90];
+    while(num>0)
       {
-        switch(rem[i])
-        {
-          case 10:
-          strcat(ret,"A");
-          break;
-          case 11:
-          strcat(ret,"B");
-          break;
-          case 12:
-          strcat(ret,"C");
-          break;
-          case 13:
-          strcat(ret,"D");
-          break;
-          case 14:
-          strcat(ret,"E");
-          break;
-          case 15:
-          strcat(ret,"F");
-          break;
-          default :
-          printf(ret,"%ld",rem[i]);
-        }
+        rem[i]=num%16;
+        num=num/16;
+        i++;
+        length++;
       }
-      return ret;
-    }
 
-int main(int argc, char *argv[]) {
-  if(argv[1] != NULL && strcmp(argv[1], "-q") == 0) q=true;
-  if(argv[2] != NULL && strcmp(argv[2], "-q") == 0) qq=true;
-  XEvent e;
-  int winx = 0;
-  int winy = 0;
-  int borderwidth = 1;
-  disp = XOpenDisplay(NULL);
-  if (disp == NULL) {
-    fprintf(stderr, "Cannot open display\n");
-    exit(1);
-  }
-
-  screen = DefaultScreen(disp);
-  win = XCreateSimpleWindow(disp, RootWindow(disp, screen), winx, winy, winwidth, winheight, borderwidth,
-  BlackPixel(disp, screen), WhitePixel(disp, screen));
-  XSelectInput(disp, win, ExposureMask | KeyPressMask | PointerMotionMask | ButtonPressMask | ResizeRedirectMask);
-  // Window XCreateWindow(display, parent, x, y, width, height, border_width, depth,
-  //                    class, visual, valuemask, attributes)
-  XMapWindow(disp, win);
-  while (1)
-    {
-      XNextEvent(disp, &e);
-      if (e.type == KeyPress)
+      for(i=length-1;i>=0;i--)
         {
-          if(!q) printf("\033[36mKeycode: %d\033[0m\n", e.xkey.keycode);
-          unsigned long keysym = XLookupKeysym(&e.xkey, 0);
-          if(!q) printf("\033[36mKeysym: %lu\033[0m\n",keysym);
-          char *ascii = XKeysymToString(keysym);
-          if(!q) printf("\033[36mASCII: %s\033[0m\n",ascii);
-          if(keysym == 65307)
-            {
-              printf("\033[31mExiting...\033[0m\n");
-              XCloseDisplay(disp);
-              return 0;
-            }
+          switch(rem[i])
+          {
+            case 10:
+            strcat(ret,"A");
+            break;
+            case 11:
+            strcat(ret,"B");
+            break;
+            case 12:
+            strcat(ret,"C");
+            break;
+            case 13:
+            strcat(ret,"D");
+            break;
+            case 14:
+            strcat(ret,"E");
+            break;
+            case 15:
+            strcat(ret,"F");
+            break;
+            default :
+            sprintf(ret,"%ld",rem[i]);
           }
-          if(e.type == 4) // button press
-            {
-              int x=e.xbutton.x;
-              int y=e.xbutton.y;
-              int button = e.xbutton.button;
-              if(!q) printf("\033[95mButton pressed. X: %d, Y: %d Button: %d\033[0m\n",x,y,button);
-              if(button == 5) sbutl(x,y,5,95,1,5,40);
-              if(button == 4) sbutl(x,y,4,95,1,5,40);
-            }
-            if(e.type == 25) // resize
-              {
-                int width=e.xresizerequest.width;
-                int height=e.xresizerequest.height;
-                if(!q) printf("\033[91mWindow resize. Width: %d, Height: %d\033[0m\n",width,height);
-                winheight=height;
-                winwidth=width;
-                slider(95,1,5,40);
-              }
-            if(e.type == 6) // mouse move
-              {
-                int x=e.xmotion.x;
-                int y=e.xmotion.y;
-                if(!q) printf("\033[34mMouse moved. X: %d, Y: %d\033[0m\n",x,y);
-              }
-      if (e.type == Expose)
-        {
-          XFillRectangle(disp, win, GC_color("#FFFFFF"), 0, 0, winwidth, winheight);
-          slider(95,1,5,40);
         }
-    }
-  }
+        return ret;
+      }
+
+      int main(int argc, char *argv[]) {
+        if(argv[1] != NULL && strcmp(argv[1], "-q") == 0) q=true;
+        if(argv[2] != NULL && strcmp(argv[2], "-q") == 0) qq=true;
+        XEvent e;
+        int winx = 0;
+        int winy = 0;
+        int borderwidth = 1;
+        disp = XOpenDisplay(NULL);
+        if (disp == NULL) {
+          fprintf(stderr, "Cannot open display\n");
+          exit(1);
+        }
+
+        screen = DefaultScreen(disp);
+        win = XCreateSimpleWindow(disp, RootWindow(disp, screen), winx, winy, winwidth, winheight, borderwidth,
+        BlackPixel(disp, screen), WhitePixel(disp, screen));
+        XSelectInput(disp, win, ExposureMask | KeyPressMask | PointerMotionMask | ButtonPressMask | ResizeRedirectMask);
+        // Window XCreateWindow(display, parent, x, y, width, height, border_width, depth,
+        //                    class, visual, valuemask, attributes)
+        XMapWindow(disp, win);
+        while (1)
+          {
+            XNextEvent(disp, &e);
+            if (e.type == KeyPress)
+              {
+                if(!q) printf("\033[36mKeycode: %d\033[0m\n", e.xkey.keycode);
+                unsigned long keysym = XLookupKeysym(&e.xkey, 0);
+                if(!q) printf("\033[36mKeysym: %lu\033[0m\n",keysym);
+                char *ascii = XKeysymToString(keysym);
+                if(!q) printf("\033[36mASCII: %s\033[0m\n",ascii);
+                if(keysym == 65307)
+                  {
+                    printf("\033[31mExiting...\033[0m\n");
+                    XCloseDisplay(disp);
+                    return 0;
+                  }
+                }
+                if(e.type == 4) // button press
+                  {
+                    int x=e.xbutton.x;
+                    int y=e.xbutton.y;
+                    int button = e.xbutton.button;
+                    if(!q) printf("\033[95mButton pressed. X: %d, Y: %d Button: %d\033[0m\n",x,y,button);
+                    if(button == 5) sbutl(x,y,5,95,1,5,40);
+                    if(button == 4) sbutl(x,y,4,95,1,5,40);
+                  }
+                  if(e.type == 25) // resize
+                    {
+                      int width=e.xresizerequest.width;
+                      int height=e.xresizerequest.height;
+                      if(!q) printf("\033[91mWindow resize. Width: %d, Height: %d\033[0m\n",width,height);
+                      winheight=height;
+                      winwidth=width;
+                      slider(95,1,5,40);
+                    }
+                    if(e.type == 6) // mouse move
+                      {
+                        int x=e.xmotion.x;
+                        int y=e.xmotion.y;
+                        if(!q) printf("\033[34mMouse moved. X: %d, Y: %d\033[0m\n",x,y);
+                      }
+                      if (e.type == Expose)
+                        {
+                        //  char *color = dec2hex(150);
+                          //strcat(color,dec2hex(10));
+                          //strcat(color,dec2hex(150));
+                          //printf("%s\n",color);
+                          XFillRectangle(disp, win, GC_color("#FFFFFF"), 0, 0, winwidth, winheight);
+                          slider(95,1,5,40);
+                        }
+                      }
+                    }
