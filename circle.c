@@ -33,6 +33,16 @@ GC GC_color(char color[])
   return a;
 }
 
+GC GC_rgb(int r, int g, int b) // I'm to bad in math :(
+{
+  printf("!!!!!!!!------\n!!!!!!!!\n");
+  //if(r > 255 || g > 255 || b > 255) printf("ERROR: Illegal values supplied to GC_rgb()\n"); return 0;
+  float tr = (255.0 / r) - 1.0;
+  float tg = (255.0 / g) - 1.0;
+  float tb = (255.0 / b) - 1.0;
+  printf("R: %f G: %f B: %f\n",tr,tg,tb);
+  return GC_color("RGBI:0.5/0/0.5");
+}
 
 void slider(int left, int top, int width, int height)
 {
@@ -73,47 +83,6 @@ void sbutl(int x, int y, int but, int left, int top, int width, int height)
       if(!qq) printf("\033[32mSlider change: %d%%\033[0m\n",sliderpos);
     }
   }
-
-  char *dec2hex(long int num)
-  {
-    long int rem[50],i=0,length=0;
-    char *ret[90];
-    while(num>0)
-      {
-        rem[i]=num%16;
-        num=num/16;
-        i++;
-        length++;
-      }
-
-      for(i=length-1;i>=0;i--)
-        {
-          switch(rem[i])
-          {
-            case 10:
-            strcat(ret,"A");
-            break;
-            case 11:
-            strcat(ret,"B");
-            break;
-            case 12:
-            strcat(ret,"C");
-            break;
-            case 13:
-            strcat(ret,"D");
-            break;
-            case 14:
-            strcat(ret,"E");
-            break;
-            case 15:
-            strcat(ret,"F");
-            break;
-            default :
-            sprintf(ret,"%ld",rem[i]);
-          }
-        }
-        return ret;
-      }
 
       int main(int argc, char *argv[]) {
         if(argv[1] != NULL && strcmp(argv[1], "-q") == 0) q=true;
@@ -178,10 +147,6 @@ void sbutl(int x, int y, int but, int left, int top, int width, int height)
                       }
                       if (e.type == Expose)
                         {
-                        //  char *color = dec2hex(150);
-                          //strcat(color,dec2hex(10));
-                          //strcat(color,dec2hex(150));
-                          //printf("%s\n",color);
                           XFillRectangle(disp, win, GC_color("#FFFFFF"), 0, 0, winwidth, winheight);
                           slider(95,1,5,40);
                         }

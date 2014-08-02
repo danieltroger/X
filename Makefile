@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 CFLAGS= -g -Wall -L/opt/X11/lib -I/opt/X11/include -lX11
 SOURCES=$(TARGET).c
 
