@@ -35,11 +35,12 @@ GC GC_color(char color[])
 
 GC GC_rgb(int r, int g, int b) // I'm to bad in math :(
 {
-  printf("!!!!!!!!------\n!!!!!!!!\n");
-  //if(r > 255 || g > 255 || b > 255) printf("ERROR: Illegal values supplied to GC_rgb()\n"); return 0;
-  float tr = (255.0 / r) - 1.0;
-  float tg = (255.0 / g) - 1.0;
-  float tb = (255.0 / b) - 1.0;
+  //printf("!!!!!!!!------\n!!!!!!!!\n");
+  if(r > 255 || g > 255 || b > 255) printf("ERROR: Illegal values supplied to GC_rgb()\n"); return 0;
+  float mp = 0.00392156862745098;
+  float tr = mp*r;
+  float tg = mp*g;
+  float tb = mp*b;
   printf("R: %f G: %f B: %f\n",tr,tg,tb);
   return GC_color("RGBI:0.5/0/0.5");
 }
