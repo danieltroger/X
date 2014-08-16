@@ -1,5 +1,5 @@
-CC=gcc
-CFLAGS= -g -Wall -L/opt/X11/lib -I/opt/X11/include -lX11
+CC=clang
+CFLAGS= -g -Wall -lX11
 SOURCES=$(TARGET).c
 
 all: $(TARGET)

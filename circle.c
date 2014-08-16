@@ -12,8 +12,8 @@
 
 bool q = false;
 bool qq = false;
-int winwidth = 1290;
-int winheight = 910;
+int winwidth = 950;
+int winheight = 680;
 int sliderpos = 0;
 int wscale = 100; // 1m
 Display *disp;
@@ -33,16 +33,22 @@ GC GC_color(char color[])
   return a;
 }
 
-GC GC_rgb(int r, int g, int b) // I'm to bad in math :(
+GC GC_rgb(int r, int g, int b)
 {
-  //printf("!!!!!!!!------\n!!!!!!!!\n");
-  if(r > 255 || g > 255 || b > 255) printf("ERROR: Illegal values supplied to GC_rgb()\n"); return 0;
+  if(r > 255 || g > 255 || b > 255)
+  {
+    printf("ERROR: Illegal values supplied to GC_rgb()\n");
+    exit;
+  }
   float mp = 0.00392156862745098;
   float tr = mp*r;
   float tg = mp*g;
   float tb = mp*b;
-  printf("R: %f G: %f B: %f\n",tr,tg,tb);
-  return GC_color("RGBI:0.5/0/0.5");
+  //printf("R: %f G: %f B: %f\n",tr,tg,tb);
+  char *c[30];
+  sprintf(c,"RGBI:%f/%f/%f",tr,tg,tb);
+  //printf("%s\n",c);
+  return GC_color(c);
 }
 
 void slider(int left, int top, int width, int height)
@@ -148,8 +154,9 @@ void sbutl(int x, int y, int but, int left, int top, int width, int height)
                       }
                       if (e.type == Expose)
                         {
-                          XFillRectangle(disp, win, GC_color("#FFFFFF"), 0, 0, winwidth, winheight);
+                          XFillRectangle(disp, win, GC_rgb(10,255,10), 0, 0, winwidth, winheight);
                           slider(95,1,5,40);
+                          GC_rgb(10,250,0);
                         }
                       }
                     }
